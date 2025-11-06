@@ -3,6 +3,8 @@ package seoulmate.mission.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import seoulmate.ai.ImageAiService;
+import seoulmate.ai.model.ImageCategory;
 import seoulmate.mission.entity.Mission;
 import seoulmate.mission.entity.MissionAttempt;
 import seoulmate.mission.repository.MissionAttemptRepository;
@@ -17,6 +19,7 @@ public class MissionAttemptService {
     private final MissionAttemptRepository missionAttemptRepository;
     private final MissionRepository missionRepository;
     private final UserRepository userRepository;
+    private final ImageAiService imageAiService;
 
     @Transactional
     public MissionAttempt createAttempt(Long userId,
@@ -56,6 +59,32 @@ public class MissionAttemptService {
         MissionAttempt attempt = missionAttemptRepository.findById(attemptId)
                 .orElseThrow(() -> new IllegalArgumentException("Attempt not found"));
         attempt.verifyFail(label, score);
+        return attempt;
+    }
+
+    @Transactional
+    public MissionAttempt analyzeAndVerify(Long attemptId) {
+        MissionAttempt attempt = missionAttemptRepository.findById(attemptId)
+                .orElseThrow(() -> new IllegalArgumentException("Attempt not found"));
+
+        String imagePath = attempt.getImageUrl();
+
+        ImageAiService.AiResult result = imageAiService.classify(imagePath);
+
+        String missionCategory = attempt.getMission().getCategory();
+        ImageCategory expectedCategory;
+        try {
+            expectedCategory = ImageCategory.valueOf(missionCategory.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            expectedCategory = ImageCategory.OTHER;
+        }
+
+        if (result.category() == expectedCategory) {
+            attempt.verifySuccess(result.label(), result.score());
+        } else {
+            attempt.verifyFail(result.label(), result.score());
+        }
+
         return attempt;
     }
 }

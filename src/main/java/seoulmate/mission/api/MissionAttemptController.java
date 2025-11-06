@@ -48,6 +48,8 @@ public class MissionAttemptController {
                 longitude
         );
 
+        attempt = missionAttemptService.analyzeAndVerify(attempt.getId());
+
         return new MissionAttemptResponse(
                 attempt.getId(),
                 attempt.getStatus().name(),
@@ -56,6 +58,7 @@ public class MissionAttemptController {
                 attempt.getLongitude()
         );
     }
+
 
     public record MissionAttemptResponse(
             Long id,
