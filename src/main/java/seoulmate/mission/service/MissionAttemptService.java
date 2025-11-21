@@ -36,6 +36,8 @@ public class MissionAttemptService {
         MissionAttempt attempt = MissionAttempt.builder()
                 .user(user)
                 .mission(mission)
+                .latitude(latitude)
+                .longitude(longitude)
                 .success(false)
                 .build();
 

@@ -21,10 +21,9 @@ public class AiTestController {
 
     @PostMapping("/predict")
     public AiTestResponse predict(@RequestParam("image") MultipartFile image) throws IOException {
-        String imageUrl = imageStorageService.store(image);
-        ImageAiService.AiResult result = imageAiService.classify(imageUrl);
+        ImageAiService.AiResult result = imageAiService.classifyImage(image.getBytes());
         return new AiTestResponse(
-                imageUrl,
+                null,
                 result.label(),
                 result.score(),
                 result.category().name()

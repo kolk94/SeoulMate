@@ -10,4 +10,6 @@ public interface MissionRepository extends JpaRepository<Mission, Long> {
 
     List<Mission> findByStartDateLessThanEqualAndEndDateGreaterThanEqual(LocalDate startDate,
                                                                          LocalDate endDate);
+
+    List<Mission> findByCourseId(Long courseId);
 }

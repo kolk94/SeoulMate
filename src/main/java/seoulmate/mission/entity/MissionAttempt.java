@@ -26,6 +26,12 @@ public class MissionAttempt {
     private User user;
 
     @Column(nullable = false)
+    private double latitude;
+
+    @Column(nullable = false)
+    private double longitude;
+
+    @Column(nullable = false)
     private boolean success;
 
     @Column(nullable = false)
@@ -43,10 +49,21 @@ public class MissionAttempt {
         this.createdAt = now;
         this.updatedAt = now;
         this.attemptedAt = now;
+        this.success = false;
     }
 
     @PreUpdate
     public void onUpdate() {
         this.updatedAt = Instant.now();
+    }
+
+    public void verifySuccess(String label, Double score) {
+        this.success = true;
+        this.attemptedAt = Instant.now();
+    }
+
+    public void verifyFail(String label, Double score) {
+        this.success = false;
+        this.attemptedAt = Instant.now();
     }
 }

@@ -28,15 +28,12 @@ public class ImageAiService {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    public AiResult classify(String imagePath) {
+    public AiResult classifyImage(byte[] imageBytes) {
         try {
-            Path path = Paths.get(uploadDir).resolve(imagePath);
-            byte[] bytes = Files.readAllBytes(path);
-
-            ByteArrayResource resource = new ByteArrayResource(bytes) {
+            ByteArrayResource resource = new ByteArrayResource(imageBytes) {
                 @Override
                 public String getFilename() {
-                    return imagePath;
+                    return "upload";
                 }
             };
 
@@ -74,10 +71,8 @@ public class ImageAiService {
 
             return new AiResult(label, score, category);
 
-        } catch (IOException e) {
-            return new AiResult("IO_ERROR", 0.0, ImageCategory.OTHER);
         } catch (Exception e) {
-            return new AiResult("AI_ERROR", 0.0, ImageCategory.OTHER);
+            throw new IllegalStateException("AI_SERVER_ERROR: " + e.getMessage(), e);
         }
     }
 

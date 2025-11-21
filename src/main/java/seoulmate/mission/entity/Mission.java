@@ -27,6 +27,9 @@ public class Mission {
     @Column(nullable = false, length = 300)
     private String description;
 
+    @Column(nullable = false, length = 50)
+    private String category;
+
     @Column(nullable = false, length = 100)
     private String locationName;
 

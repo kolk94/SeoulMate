@@ -14,6 +14,13 @@ public class JwtTokenProvider {
     @Value("${jwt.secret}")
     private String secretKey;
 
+    public String createToken(String email) {
+        Algorithm algorithm = Algorithm.HMAC256(secretKey);
+        return JWT.create()
+                .withSubject(email)
+                .sign(algorithm);
+    }
+
     public boolean validateToken(String token) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secretKey);

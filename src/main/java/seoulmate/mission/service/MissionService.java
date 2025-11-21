@@ -39,4 +39,8 @@ public class MissionService {
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         return r * c;
     }
+
+    public List<Mission> getMissionsByCourse(Long courseId) {
+        return missionRepository.findByCourseId(courseId);
+    }
 }

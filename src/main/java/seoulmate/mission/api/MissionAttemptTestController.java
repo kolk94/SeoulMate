@@ -3,7 +3,11 @@ package seoulmate.mission.api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import seoulmate.mission.entity.MissionAttempt;
 import seoulmate.mission.service.MissionAttemptService;
@@ -12,49 +16,40 @@ import seoulmate.user.repository.UserRepository;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/mission-attempts")
-public class MissionAttemptController {
+@RequestMapping("/api/missions")
+public class MissionAttemptTestController {
 
     private final MissionAttemptService missionAttemptService;
     private final UserRepository userRepository;
 
-    @PostMapping("/{missionId}")
-    public CreateAttemptResponse createAttempt(
+    @PostMapping("/{missionId}/attempts")
+    public MissionAttemptResponse createAttempt(
             @PathVariable Long missionId,
-            @RequestParam("lat") double latitude,
-            @RequestParam("lng") double longitude,
+            @RequestParam("image") MultipartFile image,
             @AuthenticationPrincipal UserDetails principal
-    ) {
+    ) throws Exception {
+
         User user = userRepository.findByEmail(principal.getUsername())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         MissionAttempt attempt = missionAttemptService.createAttempt(
                 user.getId(),
                 missionId,
-                latitude,
-                longitude
+                0,
+                0
         );
 
-        return new CreateAttemptResponse(attempt.getId());
-    }
+        attempt = missionAttemptService.analyzeAndVerify(attempt.getId(), image.getBytes());
 
-    @PostMapping("/{attemptId}/verify")
-    public VerifyAttemptResponse verifyAttempt(
-            @PathVariable Long attemptId,
-            @RequestParam("image") MultipartFile image
-    ) throws Exception {
-
-        MissionAttempt attempt = missionAttemptService.analyzeAndVerify(
-                attemptId,
-                image.getBytes()
-        );
-
-        return new VerifyAttemptResponse(
+        return new MissionAttemptResponse(
                 attempt.getId(),
                 attempt.isSuccess()
         );
     }
 
-    public record CreateAttemptResponse(Long attemptId) {}
-    public record VerifyAttemptResponse(Long attemptId, boolean success) {}
+    public record MissionAttemptResponse(
+            Long id,
+            boolean success
+    ) {
+    }
 }
