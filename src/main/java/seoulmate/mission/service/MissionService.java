@@ -18,8 +18,14 @@ public class MissionService {
         LocalDate today = LocalDate.now();
         List<Mission> activeMissions =
                 missionRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(today, today);
+
         return activeMissions.stream()
-                .filter(m -> distanceMeters(userLat, userLng, m.getLatitude(), m.getLongitude()) <= maxDistanceMeters)
+                .filter(m -> distanceMeters(
+                        userLat,
+                        userLng,
+                        m.getLatitude(),
+                        m.getLongitude())
+                        <= maxDistanceMeters)
                 .toList();
     }
 

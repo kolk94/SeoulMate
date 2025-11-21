@@ -24,7 +24,6 @@ public class MissionAttemptService {
     @Transactional
     public MissionAttempt createAttempt(Long userId,
                                         Long missionId,
-                                        String imageUrl,
                                         double latitude,
                                         double longitude) {
 
@@ -37,10 +36,7 @@ public class MissionAttemptService {
         MissionAttempt attempt = MissionAttempt.builder()
                 .user(user)
                 .mission(mission)
-                .imageUrl(imageUrl)
-                .latitude(latitude)
-                .longitude(longitude)
-                .status(MissionAttempt.Status.PENDING)
+                .success(false)
                 .build();
 
         return missionAttemptRepository.save(attempt);
@@ -63,13 +59,11 @@ public class MissionAttemptService {
     }
 
     @Transactional
-    public MissionAttempt analyzeAndVerify(Long attemptId) {
+    public MissionAttempt analyzeAndVerify(Long attemptId, byte[] imageBytes) {
         MissionAttempt attempt = missionAttemptRepository.findById(attemptId)
                 .orElseThrow(() -> new IllegalArgumentException("Attempt not found"));
 
-        String imagePath = attempt.getImageUrl();
-
-        ImageAiService.AiResult result = imageAiService.classify(imagePath);
+        var result = imageAiService.classifyImage(imageBytes);
 
         String missionCategory = attempt.getMission().getCategory();
         ImageCategory expectedCategory;

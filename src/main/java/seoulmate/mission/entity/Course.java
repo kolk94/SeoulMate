@@ -3,23 +3,18 @@ package seoulmate.mission.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.Instant;
-import java.time.LocalDate;
 
 @Entity
-@Table(name = "mission")
+@Table(name = "course")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class Mission {
+public class Course {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_id", nullable = false)
-    private Course course;
 
     @Column(nullable = false, length = 100)
     private String title;
@@ -27,26 +22,14 @@ public class Mission {
     @Column(nullable = false, length = 300)
     private String description;
 
-    @Column(nullable = false, length = 100)
-    private String locationName;
+    @Column(nullable = false, length = 50)
+    private String region;
+
+    @Column(nullable = false, length = 20)
+    private String difficulty;
 
     @Column(nullable = false)
-    private double latitude;
-
-    @Column(nullable = false)
-    private double longitude;
-
-    @Column(nullable = false)
-    private int radiusMeters;
-
-    @Column(nullable = false)
-    private int missionOrder;
-
-    @Column(nullable = false)
-    private LocalDate startDate;
-
-    @Column(nullable = false)
-    private LocalDate endDate;
+    private int durationMinutes;
 
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
