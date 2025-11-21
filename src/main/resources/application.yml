@@ -27,3 +27,11 @@ logging:
   level:
     org.hibernate.SQL: debug
     org.hibernate.orm.jdbc.bind: trace
+
+ai:
+  base-url: http://localhost:8000
+  internal-token:
+
+app:
+  upload:
+    dir: uploads
