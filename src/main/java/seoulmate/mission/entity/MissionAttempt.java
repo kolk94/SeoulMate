@@ -66,4 +66,10 @@ public class MissionAttempt {
         this.success = false;
         this.attemptedAt = Instant.now();
     }
+
+    public void updateLocation(double lat, double lng) {
+        this.latitude = lat;
+        this.longitude = lng;
+        this.attemptedAt = Instant.now();
+    }
 }
